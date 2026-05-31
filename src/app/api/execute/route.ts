@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Error running code" }, { status: 500 });
   }
 }

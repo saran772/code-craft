@@ -2,7 +2,8 @@ import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { api, internal } from "./_generated/api";
+import { api } from "./_generated/api";
+import { createHmac } from "crypto";
 
 const http = httpRouter();
 
@@ -11,31 +12,31 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     const payloadString = await request.text();
-    const signature = request.headers.get("X-Signature");
+    const signature = request.headers.get("x-razorpay-signature");
 
     if (!signature) {
-      return new Response("Missing X-Signature header", { status: 400 });
+      return new Response("Missing signature header", { status: 400 });
     }
 
     try {
-      const payload = await ctx.runAction(internal.lemonSqueezy.verifyWebhook, {
-        payload: payloadString,
-        signature,
-      });
+      const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET!;
+      const hmac = createHmac("sha256", webhookSecret);
+      const computedSignature = hmac.update(payloadString).digest("hex");
 
-      if (payload.meta.event_name === "order_created") {
-        const { data } = payload;
+      if (computedSignature !== signature) {
+        return new Response("Invalid signature", { status: 400 });
+      }
 
-        const { success } = await ctx.runMutation(api.users.upgradeToPro, {
-          email: data.attributes.user_email,
-          razorpayCustomerId: data.attributes.customer_id.toString(),
-          razorpayOrderId: data.id,
-          amount: data.attributes.total,
+      const payload = JSON.parse(payloadString);
+
+      if (payload.event === "payment.captured") {
+        const payment = payload.payload.payment.entity;
+        await ctx.runMutation(api.users.upgradeToPro, {
+          email: payment.email,
+          razorpayCustomerId: payment.contact,
+          razorpayOrderId: payment.order_id,
+          amount: payment.amount,
         });
-
-        if (success) {
-          // optionally do anything here
-        }
       }
 
       return new Response("Webhook processed successfully", { status: 200 });
@@ -60,9 +61,7 @@ http.route({
     const svix_timestamp = request.headers.get("svix-timestamp");
 
     if (!svix_id || !svix_signature || !svix_timestamp) {
-      return new Response("Error occurred -- no svix headers", {
-        status: 400,
-      });
+      return new Response("Error occurred -- no svix headers", { status: 400 });
     }
 
     const payload = await request.json();
@@ -84,9 +83,7 @@ http.route({
 
     const eventType = evt.type;
     if (eventType === "user.created") {
-      // save the user to convex db
       const { id, email_addresses, first_name, last_name } = evt.data;
-
       const email = email_addresses[0].email_address;
       const name = `${first_name || ""} ${last_name || ""}`.trim();
 

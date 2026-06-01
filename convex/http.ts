@@ -7,7 +7,7 @@ import { api, internal } from "./_generated/api";
 const http = httpRouter();
 
 http.route({
-  path: "/lemon-squeezy-webhook",
+  path: "/razorpay-webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     const payloadString = await request.text();
@@ -28,8 +28,8 @@ http.route({
 
         const { success } = await ctx.runMutation(api.users.upgradeToPro, {
           email: data.attributes.user_email,
-          lemonSqueezyCustomerId: data.attributes.customer_id.toString(),
-          lemonSqueezyOrderId: data.id,
+          razorpayCustomerId: data.attributes.customer_id.toString(),
+          razorpayOrderId: data.id,
           amount: data.attributes.total,
         });
 

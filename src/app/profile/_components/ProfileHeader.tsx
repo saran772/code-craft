@@ -20,8 +20,8 @@ interface ProfileHeaderProps {
     _id: Id<"users">;
     _creationTime: number;
     proSince?: number | undefined;
-    lemonSqueezyCustomerId?: string | undefined;
-    lemonSqueezyOrderId?: string | undefined;
+    razorpayCustomerId?: string | undefined;
+    razorpayOrderId?: string | undefined;
     name: string;
     userId: string;
     email: string;

@@ -16,33 +16,35 @@ export default function UpgradeButton() {
     document.body.appendChild(script);
   }, []);
 
-  const handlePayment = () => {
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: 49900,
-      currency: "INR",
-      name: "CodeCraft",
-      description: "Lifetime Pro Access",
-      image: "/favicon.ico",
-      handler: function (response: any) {
-        alert("🎉 Payment Successful! Payment ID: " + response.razorpay_payment_id);
-      },
-      prefill: {
-        name: "",
-        email: "",
-      },
-      theme: {
-        color: "#3B82F6",
-      },
-      modal: {
-        ondismiss: function () {
-          console.log("Payment dismissed");
-        },
-      },
-    };
+  const handlePayment = async () => {
+    try {
+      const res = await fetch("/api/create-order", { method: "POST" });
+      const order = await res.json();
 
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "CodeCraft",
+        description: "Lifetime Pro Access",
+        order_id: order.id,
+        handler: function (response: any) {
+          alert("🎉 Payment Successful! \nPayment ID: " + response.razorpay_payment_id);
+        },
+        prefill: {
+          name: "",
+          email: "",
+        },
+        theme: {
+          color: "#3B82F6",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (

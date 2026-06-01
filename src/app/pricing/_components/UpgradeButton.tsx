@@ -1,6 +1,9 @@
 "use client";
 import { Zap } from "lucide-react";
 import { useEffect } from "react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
 
 declare global {
   interface Window {
@@ -9,6 +12,9 @@ declare global {
 }
 
 export default function UpgradeButton() {
+  const { user } = useUser();
+  const upgradeToPro = useMutation(api.users.upgradeToPro);
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -28,12 +34,19 @@ export default function UpgradeButton() {
         name: "CodeCraft",
         description: "Lifetime Pro Access",
         order_id: order.id,
-        handler: function (response: any) {
-          alert("🎉 Payment Successful! \nPayment ID: " + response.razorpay_payment_id);
+        handler: async function (response: any) {
+          await upgradeToPro({
+            email: user?.emailAddresses[0].emailAddress || "",
+            razorpayCustomerId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            amount: 49900,
+          });
+          alert("🎉 Payment Successful! You are now a Pro member!");
+          window.location.reload();
         },
         prefill: {
-          name: "",
-          email: "",
+          name: user?.fullName || "",
+          email: user?.emailAddresses[0].emailAddress || "",
         },
         theme: {
           color: "#3B82F6",

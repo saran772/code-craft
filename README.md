@@ -38,7 +38,7 @@ CodeCraft is a powerful Online Code Editor and IDE built with a modern tech stac
 
 # Demo
 
-* **[Live Demo](code-craft-taupe-kappa.vercel.app/):** Check out the live version of CodeCraft to see its features in action.
+* **[Live Demo](code-craft-taupe-kappa.vercel.app):** Check out the live version of CodeCraft to see its features in action.
 
 # Video
 
@@ -123,7 +123,7 @@ A short and simple permissive license with conditions only requiring preservatio
 * **[Convex](https://convex.dev)** for backend services
 * **[ShadCN](https://ui.shadcn.com)** for UI components
 * **[Tailwind CSS](https://tailwindcss.com)** for styling
-* **[Lemon Squeezy](https://www.lemonsqueezy.com/)** for payment processing
+* **[Razorpay](https://razorpay.com/)** for payment processing
 * **[Webhooks](https://webhook.site/)** for workflow automation
 
 * ## 👨‍💻 Maintainer

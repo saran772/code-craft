@@ -42,7 +42,6 @@ CodeCraft is a powerful Online Code Editor and IDE built with a modern tech stac
 
 # Video
 
-* **[Project Overview Video](https://drive.google.com/file/d/1tw_HZyQi08h1IDMbvpVkrVjCW3XEWVcR/view?usp=drivesdk):** Watch a video demonstration of the project, including its main features and functionality.
 
 # Getting Started
 ### 1. **Clone the repository**

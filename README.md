@@ -38,7 +38,7 @@ CodeCraft is a powerful Online Code Editor and IDE built with a modern tech stac
 
 # Demo
 
-* **[Live Demo](code-craft-taupe-kappa.vercel.app):** Check out the live version of CodeCraft to see its features in action.
+* **[Live Demo](https://code-craft-taupe-kappa.vercel.app):** Check out the live version of CodeCraft to see its features in action.
 
 # Video
 
